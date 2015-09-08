@@ -22,10 +22,14 @@ getLinksCNEs <- function(num.inicial, num.final){
   return(data.out)
 }
 
-getLinksCNEs(86099,87000)
+start.time <- Sys.time()
+test <- getLinksCNEs(86099,86200)
+end.time <- Sys.time()
+time.elapsed <- end.time - start.time
 
-
-#Para os 902 numeros acima, 180 links. Aparentemente funciona super bem. Rode isso num servidores e talvez por partes que vai funcionar.
+#Para os 902 numeros acima, 180 links. 
+#Aparentemente funciona super bem. 
+#Rode isso num servidores e talvez por partes que vai funcionar.
 
 
 checkForServer()
