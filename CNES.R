@@ -26,37 +26,85 @@ start.time <- Sys.time()
 test <- getLinksCNEs(86099,86200)
 end.time <- Sys.time()
 time.elapsed <- end.time - start.time
+#41 secs for 31 links (first time)
+#59 secs for 31 links (second time)
 
-#Para os 902 numeros acima, 180 links. 
-#Aparentemente funciona super bem. 
-#Rode isso num servidores e talvez por partes que vai funcionar.
+#save(test, file="~/Dropbox/CNES/temp.Rda")
+load("~/Dropbox/CNES/temp.Rda")
+url.list <- test
 
+cnes.data <- function(url.list=url.list, org.info=T, conv.info=T, assets.info=T, budget.info=T)
 
-checkForServer()
+  list.data <- list()
 
-startServer()
-remDrv <- remoteDriver()
-remDrv$open()
-remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
-remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
-remDrv$findElement(using = "xpath", "//div[@id = 'menuItem4']")$clickElement()
-iframe <- remDrv$findElement(using = "xpath", "//iframe")
-remDrv$switchToFrame(iframe)
-readHTMLTable(remDrv$getPageSource()[[1]])
+  checkForServer()
+  startServer()
+  remDrv <- remoteDriver()
+  remDrv$open()
 
-remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
-remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
-remDrv$findElement(using = "xpath", "//div[@id = 'menuItem5']")$clickElement()
-iframe <- remDrv$findElement(using = "xpath", "//iframe")
-remDrv$switchToFrame(iframe)
-readHTMLTable(remDrv$getPageSource()[[1]])
+  #getting listing of organizations' urls
+  #for (i in 1:nrow(url.list)){
+    
+    i <- 1 #temp
+    #identifying organization
+    list.data[[1]] <- url.list[i, ]
 
-remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
-remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
-remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()
-iframe <- remDrv$findElement(using = "xpath", "//iframe")
-remDrv$switchToFrame(iframe)
-readHTMLTable(remDrv$getPageSource()[[1]])
+    #Organization information (registration, president, board)
+    remDrv$navigate('as.character(url.list$url[i])')
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem4']")$clickElement()
+    iframe <- remDrv$findElement(using = "xpath", "//iframe")
+    remDrv$switchToFrame(iframe)
+    president.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    
+    list.data[[2]] <- president.org
+
+  
+    #remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
+    remDrv$navigate('as.character(url.list$url[i])') #this could be 
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem5']")$clickElement()
+    iframe <- remDrv$findElement(using = "xpath", "//iframe")
+    remDrv$switchToFrame(iframe)
+    board.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    
+    list.data[[3]] <- board.org
+
+    #remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
+    remDrv$navigate('as.character(url.list$url[i])')
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()
+    iframe <- remDrv$findElement(using = "xpath", "//iframe")
+    remDrv$switchToFrame(iframe)
+    budget.year.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    
+    list.data[[4]] <- budget.year.org 
+    
+    remDrv$navigate('as.character(url.list$url[i])')
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())#change
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()#change
+    iframe <- remDrv$findElement(using = "xpath", "//iframe")
+    remDrv$switchToFrame(iframe)
+    sources.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    
+    list.data[[5]] <- sources.org#change
+    
+    #More work here (parcerias)
+    remDrv$navigate('as.character(url.list$url[i])')
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())#change
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()#change
+    iframe <- remDrv$findElement(using = "xpath", "//iframe")
+    remDrv$switchToFrame(iframe)
+    parcerias.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    
+    list.data[[6]] <- parcerias.org
+
+  }
+
+  remDr$closeServer()
+
+ output(base.cnes)
+}
 
 ################Don't mind this
 
