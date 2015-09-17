@@ -49,55 +49,61 @@ cnes.data <- function(url.list=url.list, org.info=T, conv.info=T, assets.info=T,
     #identifying organization
     list.data[[1]] <- url.list[i, ]
 
-    #Organization information (registration, president, board)
-    remDrv$navigate('as.character(url.list$url[i])')
+    #President
+    remDrv$navigate(as.character(url.list$url[i]))
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
     remDrv$findElement(using = "xpath", "//div[@id = 'menuItem4']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    president.org <- readHTMLTable(remDrv$getPageSource()[[1]])
-    
-    list.data[[2]] <- president.org
-
+    list.data[[2]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
   
-    #remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
-    remDrv$navigate('as.character(url.list$url[i])') #this could be 
+
+    #Board
+    remDrv$navigate(as.character(url.list$url[i])) #this could be 
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
     remDrv$findElement(using = "xpath", "//div[@id = 'menuItem5']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    board.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    list.data[[3]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
     
-    list.data[[3]] <- board.org
 
-    #remDrv$navigate('http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/122018/RelatorioCircunstanciado.html')
-    remDrv$navigate('as.character(url.list$url[i])')
+    #Assets
+    remDrv$navigate(as.character(url.list$url[i]))
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
     remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    budget.year.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    list.data[[4]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
+     
     
-    list.data[[4]] <- budget.year.org 
-    
-    remDrv$navigate('as.character(url.list$url[i])')
-    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())#change
-    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()#change
+    #Yearly Budget
+    remDrv$navigate(as.character(url.list$url[i]))
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem21']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    sources.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    list.data[[5]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
     
-    list.data[[5]] <- sources.org#change
     
-    #More work here (parcerias)
-    remDrv$navigate('as.character(url.list$url[i])')
-    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())#change
-    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()#change
+    #Sources 
+    remDrv$navigate(as.character(url.list$url[i]))
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160446_0,0,16,null,'image2')", args = list())
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem13']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    parcerias.org <- readHTMLTable(remDrv$getPageSource()[[1]])
+    list.data[[6]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
+
+
+    #Partnerships
+    remDrv$navigate(as.character(url.list$url[i]))
+    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160446_0,0,16,null,'image2')", args = list())
+    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem14']")$clickElement()
+    iframe <- remDrv$findElement(using = "xpath", "//iframe")
+    remDrv$switchToFrame(iframe)
+    list.data[[7]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
     
-    list.data[[6]] <- parcerias.org
+    #Details on partnerships
+    
 
   }
 
