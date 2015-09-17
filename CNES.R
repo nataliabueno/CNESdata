@@ -103,6 +103,8 @@ cnes.data <- function(url.list=url.list, org.info=T, conv.info=T, assets.info=T,
     list.data[[7]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
     
     #Details on partnerships
+    remDrv$navigate("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/86110/ParceriasSubvencoesPublicas1.html")
+    list.data[[8]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
     
 
   }
