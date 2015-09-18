@@ -1,8 +1,15 @@
-library(RCurl)
-library(XML)
-library(RSelenium)
+##########################################################
+#0. Open server
+#1. Get links
+#2. Scrap president and board infor
+#3. Scrap assets
+#4. Scrap year budget
+#5. Scrap sources
+#6. Scrap partnerships and details
+##########################################################
 
-source("~/Dropbox/CNES/CNES_functions.R")
+
+source("~/Dropbox/CNES/CNES_functions.R") #requires packages RSelenium, RCurl, XLM
 
 start.time <- Sys.time()
 test <- getLinksCNEs(86099,86200)
@@ -25,10 +32,10 @@ remDrv <- remoteDriver()
 remDrv$open()
 
 #Getting data
-cnes.data(url.list=url.list)
+boards.test <- cnes.board(url.list=url.list)
 
 #Closing server
-#remDr$closeServer()
+remDrv$closeServer()
 
 
   

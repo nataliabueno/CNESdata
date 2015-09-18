@@ -1,3 +1,13 @@
+##########################################################
+#Function to get CNES links
+#Function to scrap president and board information
+#Function to scrap assets
+#Function to scrap year budget
+#Function to scrap sources
+#Function to scrap partnerships and partnerships details
+##########################################################
+
+
 library(RCurl)
 library(XML)
 library(RSelenium)
@@ -25,17 +35,18 @@ getLinksCNEs <- function(num.inicial, num.final){
 
 cnes.board <- function(url.list=url.list){
   
+  #identifying organization
+  data1 <- matrix(NA, nrow(url.list), 20)
+  colnames(data1) <- c("cnpj", "ano", "main_url", "sede", "UF", "mun", "Cartorio", "date_reg", "book_page", "nr_register", 
+                       "change_previous", "date_current_begin", "date_current_end", "name", "occupation", "position", 
+                       "gender", "public_employee", "paid", "which_paid")
+  ltemp <- list()
+  
   #getting listing of organizations' urls
   for (i in 1:nrow(url.list)){
-    
+
     print(i)
-    #identifying organization
-    data1 <- matrix(NA, nrow(url.list), 20)
-    colnames(data1) <- c("cnpj", "ano", "main_url", "sede", "UF", "mun", "Cartorio", "date_reg", "book_page", "nr_register", 
-                         "change_previous", "date_current_begin", "date_current_end", "name", "occupation", "position", 
-                         "gender", "public_employee", "paid", "which_paid")
-     data1[i, 1:3] <- url.list[i,1:3]
-    
+    data1[i, 1:3] <- url.list[i,1:3]
     #President
     remDrv$navigate(url.list[i,3])
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027153841_0, 0, 16, null, 'image1')", args = list())
@@ -69,17 +80,22 @@ cnes.board <- function(url.list=url.list){
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
     raw <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
-    
+        
     #identifying organization
     temp <- matrix(NA, length(raw$V1)-2, 5)
     colnames(temp) <- c("cnpj", "ano", "name", "position", "public_employee")
     temp[, 1] <- url.list[i, 1]
     temp[, 2] <- url.list[i, 2]
     temp[, 3] <-  as.character(raw$V1[3:length(raw$V1)])
+    temp[, 4] <-  as.character(raw$V2[3:length(raw$V2)])
+    temp[, 5] <-  as.character(raw$V3[3:length(raw$V3)])
+    ltemp[[i]] <- temp
     
   }
-  
-  
+ 
+  data2 <- do.call(rbind, ltemp)
+  return(list(data1, data2))
+}  
   
   
   
