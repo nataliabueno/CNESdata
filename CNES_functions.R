@@ -1,9 +1,9 @@
 ##########################################################
-#Function to get CNES links
-#Function to scrap president and board information
-#Function to scrap assets
-#Function to scrap year budget
-#Function to scrap sources
+#Function to get CNES links OK
+#Function to scrap president and board information OK
+#Function to scrap assets OK
+#Function to scrap year budget OK
+#Function to scrap sources OK
 #Function to scrap partnerships and partnerships details
 ##########################################################
 
@@ -199,27 +199,53 @@ cnes.budget <- function(url.list=url.list){
 }  
 
 
-
-
-
-    
+cnes.source <- function(url.list=url.list){
+  
+  data5 <- matrix(NA, nrow(url.list), 10)
+  colnames(data5) <- c("cnpj", "ano", "main_url", "Própria (recursos decorrentes da prestação de serviços da entidade)",
+                       "Própria (recursos decorrentes de mensalidades / doações dos membros ou associados)",      
+                       "Privada (recursos de doações e parcerias com empresas e entidades privadas)",
+                       "Privada (recursos de doações eventuais)",
+                       "Pública (recursos de subvenções, convênios e parcerias com órgãos ou entidades públicas)",
+                       "Internacional Privada (recursos de entidades e organizações internacionais)",
+                       "Internacional Pública (recursos de países estrangeiros, ONU, etc.)") 
+  
+  for (i in 1:nrow(url.list)){   
+    print(i)
+    data5[i, 1:3] <- url.list[i,1:3]
     
     #Sources 
-    remDrv$navigate(as.character(url.list$url[i]))
+    remDrv$navigate(url.list[i,3])
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027160446_0,0,16,null,'image2')", args = list())
     remDrv$findElement(using = "xpath", "//div[@id = 'menuItem13']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    list.data[[6]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
+    raw <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
+    data5[i, 4:ncol(data5)] <- as.character(raw$V2[-c(1,2)])
+  }
+  return(data5) 
+}
+
+
+cnes.partner(url.list=url.list){    
+     
+  data6 <- matrix(NA, nrow(url.list), 6)
+  colnames(data6) <- c("cnpj", "ano", "main_url", "Nome Órgão / Entidade", 
+                       "Natureza do Instrumento", "Posição na Estrutura Federativa")
     
+  for (i in 1:nrow(url.list)){
+    print(i)
+    data6[i, 1:3] <- url.list[i,1:3]
     
     #Partnerships
-    remDrv$navigate(as.character(url.list$url[i]))
+    remDrv$navigate(url.list[i,3])
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027160446_0,0,16,null,'image2')", args = list())
     remDrv$findElement(using = "xpath", "//div[@id = 'menuItem14']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    list.data[[7]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")[2]
+    raw  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
+    
+  }
     
     #Details on partnerships
     list.partner <- list()
@@ -229,7 +255,9 @@ cnes.budget <- function(url.list=url.list){
       remDrv$navigate(plink)
       list.partner[[j]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
 
-
+      
+  return(data6)
+}
 
 
 

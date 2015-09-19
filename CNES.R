@@ -34,8 +34,8 @@ remDrv$open()
 #Getting data
 boards.test <- cnes.board(url.list=url.list)
 assets.test <- cnes.assets(url.list=url.list)
-
-
+budget.test <- cnes.budget(url.list=url.list)
+source.test <- cnes.source(url.list=url.list)
 
 
 #Closing server
