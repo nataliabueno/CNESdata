@@ -167,18 +167,41 @@ cnes.assets <- function(url.list=url.list){
 }    
     
 
-
-
-
-
-
+cnes.budget <- function(url.list=url.list){
+  
+  data4 <- matrix(NA, nrow(url.list), 22)
+  colnames(data4) <- c("cnpj", "ano", "main_url", "RECEITA", "(-) Imposto Sobre a Receita",                    
+                       "(-) Abatimentos e Cancelamentos", "RECEITA LÍQUIDA",                                
+                       "(-) Custo de Serviços e Produtos", "SUPERÁVIT OU DÉFICIT BRUTO",                     
+                       "(-) Despesas Gerais e Administrativas", "(-) Despesas Financeiras",                       
+                       "(-) Despesas Tributárias", "(-) Outras Despesas Operacionais",               
+                       "Receitas Financeiras",  "RESULTADO OPERACIONAL",                          
+                       "(-) Despesas Não-Operacionais", "Receitas Não-Operacionais",                      
+                       "RESULTADOS DO EXERCÍCIO ANTES DE IRenda E CSLL",  "(-) Provisão para IRenda e CSLL",                
+                       "RESULTADOS DO EXERCÍCIO DEPOIS DE IRenda E CSLL", "(-) Participações e Contribuições",              
+                       "SUPERÁVIT OU DÉFICIT DO EXERCÍCIO")
+  
+  for (i in 1:nrow(url.list)){   
+    print(i)
+    data4[i, 1:3] <- url.list[i,1:3]
+    
     #Yearly Budget
-    remDrv$navigate(as.character(url.list$url[i]))
+    remDrv$navigate(url.list[i,3])
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
     remDrv$findElement(using = "xpath", "//div[@id = 'menuItem21']")$clickElement()
     iframe <- remDrv$findElement(using = "xpath", "//iframe")
     remDrv$switchToFrame(iframe)
-    list.data[[5]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
+    raw <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
+    data4[i, 4:ncol(data4)] <- as.character(raw$V2[-1])
+  
+  }
+  return(data4)
+}  
+
+
+
+
+
     
     
     #Sources 
@@ -205,13 +228,6 @@ cnes.assets <- function(url.list=url.list){
       plink <- sub("RelatorioCircunstanciado",paste("ParceriasSubvencoesPublicas", j, sep=""), url.list$url[i])
       remDrv$navigate(plink)
       list.partner[[j]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
-    }
-    
-    save(list.data, list.partner, "cnes.RData")
-  }
-  
-  output(cnes.RData)
-}
 
 
 
