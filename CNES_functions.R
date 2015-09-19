@@ -98,19 +98,80 @@ cnes.board <- function(url.list=url.list){
 }  
   
   
-  
-  
-  
-  
-    #Assets
-    remDrv$navigate(as.character(url.list$url[i]))
-    remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
-    remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()
-    iframe <- remDrv$findElement(using = "xpath", "//iframe")
-    remDrv$switchToFrame(iframe)
-    list.data[[4]] <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
+cnes.assets <- function(url.list=url.list){
+
+    #identifying organization
+    data3 <- matrix(NA, nrow(url.list), 96)
+    colnames(data3) <- c("cnpj", "ano", "main_url", "Prestação de Serviços (Exceto Saúde/Educação)_rec",
+                         "Recursos - Subvenções Públicas_rec", "Recursos - Contribuições Públicas_rec",
+                         "Recursos - Convênios Públicos_rec","Recursos - Auxílios Públicos_rec", 
+                         "Recursos - Termo de Parceria_rec", "Doações e Contribuições para Custeio_rec",
+                         "Receita de Convênios de Saúde Privados_rec", "Prest. Serviços de Saúde não Conveniados_rec",
+                         "SUS - Sistema Único de Saúde_rec", "Inscrições de Cursos e Vestibulares_rec", 
+                         "Serviços Educacionais_rec", "Taxa, Mensalidades e Contribuições_rec",
+                         "Contribuição de Empresas Mantenedoras_rec", "Doações, Campanhas e Patrocínios_rec",
+                         "Recusos Internacionais_rec", "(-) Bolsas de Estudo Concedidas_rec",
+                         "(-) Atendimento Gratuito_rec", "(-) Descontos Comerciais Concedidos_rec", "(-) PIS sobre Receitas_rec",
+                         "(-) COFINS sobre Receitas_rec", "(-) ICMS sobre Vendas_rec", "(-) ISS sobre Serviços_rec",
+                         "(-) Vendas Canceladas_rec", "(-) Outras Deduções_rec","Outras Receitas Operacionais_rec",
+                         "Descontos Obtidos_rec", "Renda de Aluguéis e Arrendamentos_rec", "Rendimentos de Títulos e Aplicações no Mercado Financeiro_rec",  
+                         "(-) Impostos s/ aplicações Financeiras_rec", "Outras Receitas Financeiras_rec", "Venda de Ativo Permanente_rec",                                
+                         "Doações receb. em bens ou mercadorias_rec", "Outras Receitas Não-Operacionais_rec",                         
+                         "Outras receitas não classificadas anteriormente_rec", "TOTAL RECEITAS_rec",
+                         "Salários de Funcionários (c/ vínculo empregatício)_desp", "Encargos Sociais com Pessoal_desp",                      
+                         "Despesas Diversas com Pessoal_desp",  "Remuneração de Dirigentes_desp",                         
+                         "Encargos Sociais com Dirigentes_desp",  "Outros Encargos Sociais Compulsórios_desp",              
+                         "Outras Despesas com Pessoal_desp",  "Recursos Humanos Externos - Pessoa Física_desp",         
+                         "Recursos Humanos Externos - Pessoa Jurídica_desp", "INSS sobre Serviços Prestados por Terceiros_desp",       
+                         "Outras Despesas com Serviços Contratados_desp", "Custos de Projetos_desp",                                
+                         "Água, Gás e Energia Elétrica_desp",  "Aluguéis Pagos_desp",                                    
+                         "Despesas com Veículos_desp", "Diárias e Viagens_desp",                                 
+                         "Hospedagem_desp",    "Passagens Aéreas/Rodoviárias_desp",                      
+                         "Telefone, Fax e Outras Despesas com Comunicações_desp", "Publicações Técnicas_desp",                              
+                         "Serviços Técnicos e Especializados_desp",   "Despesas com Informática_desp",                          
+                         "Prêmios de Seguros Contratados_desp",  "Despesas com Atividades Sociais e Culturais_desp",       
+                         "Outras Despesas Administrativas_desp",  "Ensino Fundamental_desp",                                
+                         "Curso Superior_desp",  "Estagiários_desp",                                       
+                         "Mestrados, Doutorados e Pós-Doutorados_desp", "Outras despesas com Bolsas de Estudo_desp",              
+                         "Impostos Federais_desp",   "Impostos Estaduais_desp",                                
+                         "Impostos Municipais_desp", "CPMF_desp",                                              
+                         "COFINS_desp", "IOF_desp",                                               
+                         "Outros Tributos, Taxas e Contribuições_desp",  "Doação de Alimentos_desp",                               
+                         "Doação de Roupas e Agasalhos_desp", "Doação de Medicamentos_desp",                            
+                         "Outras Despesas Beneficentes_desp", "Descontos Concedidos_desp",                              
+                         "Despesas Bancárias_desp", "Outras Despesas Financeiras_desp",                       
+                         "Despesas com Depreciação_desp", "Despesas com Amortização_desp",                          
+                         "Despesas com Leasing_desp", "(-) Recuperação de Despesas_desp",                       
+                         "Outras despesas Operacionais_desp", "Custo de Ativo Permanente Vendido_desp",                 
+                         "Custo de Ativo Permanente Baixado_desp", "Outras Despesas Não Operacionais_desp",                  
+                         "Participações e Contribuições_desp", "Outras Despesas Não Classificadas Anteriormente_desp",   
+                         "Provisão para Imposto de Renda e CSLL_desp", "Outras Provisões Constituídas_desp",                     
+                         "TOTAL DE DESPESAS_desp")
     
+    for (i in 1:nrow(url.list)){   
+      print(i)
+      data3[i, 1:3] <- url.list[i,1:3]
+      
+      #Assets
+      remDrv$navigate(url.list[i,3])
+      remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
+      remDrv$findElement(using = "xpath", "//div[@id = 'menuItem20']")$clickElement()
+      iframe <- remDrv$findElement(using = "xpath", "//iframe")
+      remDrv$switchToFrame(iframe)
+      raw <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
+      data3[i, 4:ncol(data3)] <- as.character(raw$V2[-c(1, 2, 3, 20, 30, 32, 38, 42, 45, 46, 
+                                           54, 59, 61, 75, 81, 89, 94, 98, 102,
+                                            105, 109, 111, 113)])
+    }
+    return(data3)
+}    
     
+
+
+
+
+
+
     #Yearly Budget
     remDrv$navigate(as.character(url.list$url[i]))
     remDrv$executeScript("MM_showMenu(window.mm_menu_1027160934_0,0,16,null,'image4')", args = list())
