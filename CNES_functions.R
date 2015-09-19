@@ -229,13 +229,11 @@ cnes.source <- function(url.list=url.list){
 
 cnes.partner(url.list=url.list){    
      
-  data6 <- matrix(NA, nrow(url.list), 6)
-  colnames(data6) <- c("cnpj", "ano", "main_url", "Nome Órgão / Entidade", 
-                       "Natureza do Instrumento", "Posição na Estrutura Federativa")
-    
+  ltemp <- list()
+  lpartner <- list()
+  
   for (i in 1:nrow(url.list)){
     print(i)
-    data6[i, 1:3] <- url.list[i,1:3]
     
     #Partnerships
     remDrv$navigate(url.list[i,3])
@@ -245,20 +243,47 @@ cnes.partner(url.list=url.list){
     remDrv$switchToFrame(iframe)
     raw  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
     
-  }
+    temp <- matrix(NA, length(raw$V1)-2, 5)
+    colnames(temp) <- c("cnpj", "ano", "Nome Órgão_Entidade", 
+                        "Natureza do Instrumento", "Posição na Estrutura Federativa")
+    temp[, 1] <- url.list[i, 1]
+    temp[, 2] <- url.list[i, 2]
+    temp[, 3] <-  as.character(raw$V1[3:length(raw$V1)])
+    temp[, 4] <-  as.character(raw$V2[3:length(raw$V2)])
+    temp[, 5] <-  as.character(raw$V3[3:length(raw$V3)])
+    ltemp[[i]] <- temp
     
-    #Details on partnerships
-    list.partner <- list()
-    nr.p <- dim(list.data[[7]]$`NULL`)[1]-1 #getting number of partnerships
-    for (j in 1:nr.p){
-      plink <- sub("RelatorioCircunstanciado",paste("ParceriasSubvencoesPublicas", j, sep=""), url.list$url[i])
-      remDrv$navigate(plink)
-      list.partner[[j]]  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
-
-      
-  return(data6)
-}
-
+  }
+  
+  data6 <- do.call(rbind, ltemp)
+  
+  #Details on partnerships
+  nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
+  
+  for (j in 1:nr.p){
+    remDrv$findElement(using = "xpath", "//a[@href = 'ParceriasSubvencoesPublicas2.html']")$clickElement()
+    
+    
+    
+    
+    #plink <- sub("RelatorioCircunstanciado.html", paste(" ParceriasSubvencoesPublicas", j, ".html ", sep=""), url.list[j,3])
+    remDrv$navigate(plink)
+    raw  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
+    temp <- matrix(NA, length(raw$V1)-2, 5)
+    colnames(temp) <- c("cnpj", "ano", )
+    temp[, 1] <- url.list[i, 1]
+    temp[, 2] <- url.list[i, 2]
+    temp[, 3] <-  as.character(raw$V1[3:length(raw$V1)])
+    temp[, 4] <-  as.character(raw$V2[3:length(raw$V2)])
+    temp[, 5] <-  as.character(raw$V3[3:length(raw$V3)])
+    lpartner[[i]] <- temp
+  }
+  
+  data7 <- do.call(rbind, lpartner)
+  return(list(data6, data7))
+}  
+    
+  
 
 
 
