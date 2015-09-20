@@ -260,6 +260,8 @@ cnes.partner(url.list=url.list){
   nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
   
   for (j in 1:nr.p){
+    plink <- paste(' ParceriasSubvencoesPublicas', j, '.html \']', sep="")
+    remDrv$findElement(using = 'xpath', plink)$clickElement()
     remDrv$findElement(using = 'xpath', "//a[@href = ' ParceriasSubvencoesPublicas2.html ']")$clickElement()
     raw1  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
     temp <- matrix(NA, 1, 12)
@@ -269,7 +271,19 @@ cnes.partner(url.list=url.list){
                         "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
                         "Nº de  Beneficiários", "Previsão de início das atividades", 
                         "Previsão de término das atividades", "Resumo do objetivo da parceria")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+    temp[1,1] <-  as.character(raw1$V1[3])
+    temp[1,2] <-  as.character(raw1$V1[5])
+    temp[1,3] <-  as.character(raw1$V1[7])
+    temp[1,4] <-  as.character(raw1$V1[9])
+    temp[1,5] <-  as.character(raw1$V1[11])
+    temp[1,6] <-  as.character(raw1$V1[13])
+    temp[1,7] <-  as.character(raw1$V1[15])
+    temp[1,8] <-  as.character(raw1$V1[17])
+    temp[1,9] <-  as.character(raw1$V1[19])
+    temp[1,10] <-  as.character(raw1$V1[21])
+    temp[1,11] <-  as.character(raw1$V1[23])
+    temp[1,11] <-  as.character(raw1$V1[25])
+    lpartner[[i]] <- temp                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                   
                         
