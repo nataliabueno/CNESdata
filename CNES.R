@@ -36,7 +36,7 @@ boards.test <- cnes.board(url.list=url.list) #OK
 assets.test <- cnes.assets(url.list=url.list) #OK
 budget.test <- cnes.budget(url.list=url.list) #OK
 source.test <- cnes.source(url.list=url.list) #OK
-partner.test <- cnes.partner(url.list=url.list) #error in 5 
+partner.test <- cnes.partner(url.list=url.list) #
 
 
 #Closing server

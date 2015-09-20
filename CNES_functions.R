@@ -232,6 +232,7 @@ cnes.partner <- function(url.list=url.list){
   ltemp <- list()
   lpartner <- list()
   ltempf <- list()
+  ltempff <- list()
   
   for (i in 1:nrow(url.list)){
     print(i)
@@ -281,6 +282,7 @@ cnes.partner <- function(url.list=url.list){
     if (nr.p > 1){
       
       for (j in 1:nr.p){
+        print(j)
         plink <- paste("//a[@href = ' ParceriasSubvencoesPublicas", j, '.html \']', sep="")
         remDrv$findElement(using = 'xpath', plink)$clickElement()
         raw1  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
@@ -305,13 +307,14 @@ cnes.partner <- function(url.list=url.list){
         temp1[1,12] <-  as.character(raw1$V1[25]) 
         lpartner[[j]] <- temp1
         remDrv$goBack()
-      } 
-      data6 <- do.call(rbind, lpartner) 
-    }    
+      }  
+    }
+    ltempf <- do.call(rbind, lpartner)
+    ltempff[[i]] <- ltempf
   } 
-  ltempf[[i]] <- cbind(ltemp[[i]], data6)
-  data7 <- do.call(rbind, ltempf)
-  return(list(data7))  
+  data6 <- do.call(rbind, ltempff)
+  data7 <- do.call(rbind, ltemp)
+  return(list(data7, data6))  
 }                        
                         
    
