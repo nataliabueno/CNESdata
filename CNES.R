@@ -5,7 +5,7 @@
 #3. Scrap assets
 #4. Scrap year budget
 #5. Scrap sources
-#6. Scrap partnerships and details
+#6. Scrap partnerships and details 
 ##########################################################
 
 
@@ -23,7 +23,7 @@ url.list <- test
 
 #Transform into matrix
 url.list <- as.matrix(url.list)
-url.list <- url.list[1:5, ] #testing functions
+url.list <- url.list[1:3, ] #testing functions
 
 #Setting server up
 checkForServer()
@@ -36,7 +36,7 @@ boards.test <- cnes.board(url.list=url.list) #OK
 assets.test <- cnes.assets(url.list=url.list) #OK
 budget.test <- cnes.budget(url.list=url.list) #OK
 source.test <- cnes.source(url.list=url.list) #OK
-partner.test <- cnes.partner(url.list=url.list) #
+partner.test <- cnes.partner(url.list=url.list) #error
 
 
 #Closing server

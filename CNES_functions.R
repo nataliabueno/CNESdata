@@ -1,10 +1,10 @@
 ##########################################################
-#Function to get CNES links OK
-#Function to scrap president and board information OK
-#Function to scrap assets OK
-#Function to scrap year budget OK
-#Function to scrap sources OK
-#Function to scrap partnerships and partnerships details OK
+#Function to get CNES links OK OK
+#Function to scrap president and board information OK OK
+#Function to scrap assets OK OK
+#Function to scrap year budget OK OK
+#Function to scrap sources OK OK
+#Function to scrap partnerships and partnerships details OK FIX
 ##########################################################
 
 
