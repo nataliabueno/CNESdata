@@ -227,9 +227,10 @@ cnes.source <- function(url.list=url.list){
 }
 
 
-cnes.partner(url.list=url.list){    
+cnes.partner <- function(url.list=url.list){    
      
   ltemp <- list()
+  lpartner <- list()
   
   for (i in 1:nrow(url.list)){
     print(i)
@@ -242,70 +243,76 @@ cnes.partner(url.list=url.list){
     remDrv$switchToFrame(iframe)
     raw  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
     
+    if (length(raw$V1)==2) {
+      temp <- matrix(NA, 1, 5)
+      colnames(temp) <- c("cnpj", "ano", "Nome Órgão_Entidade", 
+                          "Natureza do Instrumento", "Posição na Estrutura Federativa")
+      temp[1, 1:2] <-  url.list[1, 1:2]
+      temp[1, 3:5] <-  c("NA", "NA", "NA")
+      ltemp[[i]] <- temp 
+    }
+    
+    if (length(raw$V1) > 2) {
     temp <- matrix(NA, length(raw$V1)-2, 5)
     colnames(temp) <- c("cnpj", "ano", "Nome Órgão_Entidade", 
                         "Natureza do Instrumento", "Posição na Estrutura Federativa")
     temp[, 1] <- url.list[i, 1]
     temp[, 2] <- url.list[i, 2]
-    temp[, 3] <-  as.character(raw$V1[3:length(raw$V1)])
+    temp[, 3]<- as.character(raw$V1[3:length(raw$V1)])
     temp[, 4] <-  as.character(raw$V2[3:length(raw$V2)])
     temp[, 5] <-  as.character(raw$V3[3:length(raw$V3)])
     ltemp[[i]] <- temp
+    }
     
-  }
-  
-  data6 <- do.call(rbind, ltemp)
-  
-  #Details on partnerships
-  nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
-  
-  for (j in 1:nr.p){
-    plink <- paste(' ParceriasSubvencoesPublicas', j, '.html \']', sep="")
-    remDrv$findElement(using = 'xpath', plink)$clickElement()
-    remDrv$findElement(using = 'xpath', "//a[@href = ' ParceriasSubvencoesPublicas2.html ']")$clickElement()
-    raw1  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
-    temp <- matrix(NA, 1, 12)
-    colnames(temp) <- c("Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
-                        "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
-                        "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
-                        "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
-                        "Nº de  Beneficiários", "Previsão de início das atividades", 
-                        "Previsão de término das atividades", "Resumo do objetivo da parceria")
-    temp[1,1] <-  as.character(raw1$V1[3])
-    temp[1,2] <-  as.character(raw1$V1[5])
-    temp[1,3] <-  as.character(raw1$V1[7])
-    temp[1,4] <-  as.character(raw1$V1[9])
-    temp[1,5] <-  as.character(raw1$V1[11])
-    temp[1,6] <-  as.character(raw1$V1[13])
-    temp[1,7] <-  as.character(raw1$V1[15])
-    temp[1,8] <-  as.character(raw1$V1[17])
-    temp[1,9] <-  as.character(raw1$V1[19])
-    temp[1,10] <-  as.character(raw1$V1[21])
-    temp[1,11] <-  as.character(raw1$V1[23])
-    temp[1,11] <-  as.character(raw1$V1[25])
-    lpartner[[i]] <- temp                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-                  
+    #Details on partnerships
+    temp1 <- matrix(NA, 1, 12)
+    colnames(temp1) <- c("Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
+                         "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
+                         "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
+                         "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
+                         "Nº de  Beneficiários", "Previsão de início das atividades", 
+                         "Previsão de término das atividades", "Resumo do objetivo da parceria")
+    nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
+    if (nr.p==1) {
+      temp1[1, 1:12] <- rep(NA, 12)
+      
+    }
+    if (nr.p > 1){
+      
+      for (j in 1:nr.p){
+        plink <- paste("//a[@href = ' ParceriasSubvencoesPublicas", j, '.html \']', sep="")
+        remDrv$findElement(using = 'xpath', plink)$clickElement()
+        raw1  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
+        temp1 <- matrix(NA, 1, 12)
+        colnames(temp1) <- c("Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
+                            "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
+                            "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
+                            "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
+                            "Nº de  Beneficiários", "Previsão de início das atividades", 
+                            "Previsão de término das atividades", "Resumo do objetivo da parceria")
+        temp1[1,1] <-  as.character(raw1$V1[3])
+        temp1[1,2] <-  as.character(raw1$V1[5])
+        temp1[1,3] <-  as.character(raw1$V1[7])
+        temp1[1,4] <-  as.character(raw1$V1[9])
+        temp1[1,5] <-  as.character(raw1$V1[11])
+        temp1[1,6] <-  as.character(raw1$V1[13])
+        temp1[1,7] <-  as.character(raw1$V1[15])
+        temp1[1,8] <-  as.character(raw1$V1[17])
+        temp1[1,9] <-  as.character(raw1$V1[19])
+        temp1[1,10] <-  as.character(raw1$V1[21])
+        temp1[1,11] <-  as.character(raw1$V1[23])
+        temp1[1,11] <-  as.character(raw1$V1[25])  
+        lpartner[[j]] <- temp1
+        remDrv$goBack()
+      }      
+    }                               
+  } 
+  data6 <- do.call(rbind, lpartner) 
+  data7 <- do.call(rbind, ltemp)
+  return(list(data6, data7))  
+}                        
                         
-                        
-                        
-                        
-    #plink <- sub("RelatorioCircunstanciado.html", paste(" ParceriasSubvencoesPublicas", j, ".html ", sep=""), url.list[j,3])
-    remDrv$navigate(plink)
-    raw  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
-    temp <- matrix(NA, length(raw$V1)-2, 5)
-    colnames(temp) <- c("cnpj", "ano", )
-    temp[, 1] <- url.list[i, 1]
-    temp[, 2] <- url.list[i, 2]
-    temp[, 3] <-  as.character(raw$V1[3:length(raw$V1)])
-    temp[, 4] <-  as.character(raw$V2[3:length(raw$V2)])
-    temp[, 5] <-  as.character(raw$V3[3:length(raw$V3)])
-    lpartner[[i]] <- temp
-  }
-  
-  data7 <- do.call(rbind, lpartner)
-  return(list(data6, data7))
-}  
+   
     
   
 

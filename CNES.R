@@ -23,7 +23,7 @@ url.list <- test
 
 #Transform into matrix
 url.list <- as.matrix(url.list)
-
+url.list <- url.list[1:5, ] #testing functions
 
 #Setting server up
 checkForServer()
