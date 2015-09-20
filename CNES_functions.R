@@ -230,7 +230,6 @@ cnes.source <- function(url.list=url.list){
 cnes.partner(url.list=url.list){    
      
   ltemp <- list()
-  lpartner <- list()
   
   for (i in 1:nrow(url.list)){
     print(i)
@@ -261,11 +260,22 @@ cnes.partner(url.list=url.list){
   nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
   
   for (j in 1:nr.p){
-    remDrv$findElement(using = "xpath", "//a[@href = 'ParceriasSubvencoesPublicas2.html']")$clickElement()
-    
-    
-    
-    
+    remDrv$findElement(using = 'xpath', "//a[@href = ' ParceriasSubvencoesPublicas2.html ']")$clickElement()
+    raw1  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
+    temp <- matrix(NA, 1, 12)
+    colnames(temp) <- c("Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
+                        "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
+                        "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
+                        "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
+                        "Nº de  Beneficiários", "Previsão de início das atividades", 
+                        "Previsão de término das atividades", "Resumo do objetivo da parceria")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                  
+                        
+                        
+                        
+                        
     #plink <- sub("RelatorioCircunstanciado.html", paste(" ParceriasSubvencoesPublicas", j, ".html ", sep=""), url.list[j,3])
     remDrv$navigate(plink)
     raw  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")
