@@ -11,10 +11,10 @@
 
 source("~/Dropbox/CNES/CNES_functions.R") #requires packages RSelenium, RCurl, XLM
 
-start.time <- Sys.time()
-test <- getLinksCNEs(86099,86200)
-end.time <- Sys.time()
-time.elapsed <- end.time - start.time
+#start.time <- Sys.time()
+#test <- getLinksCNEs(86099,86200)
+#end.time <- Sys.time()
+#time.elapsed <- end.time - start.time
 
 
 load("~/Dropbox/CNES/temp.Rda")
@@ -32,11 +32,11 @@ remDrv <- remoteDriver()
 remDrv$open()
 
 #Getting data
-boards.test <- cnes.board(url.list=url.list)
-assets.test <- cnes.assets(url.list=url.list)
-budget.test <- cnes.budget(url.list=url.list)
-source.test <- cnes.source(url.list=url.list)
-partner.test <- cnes.partner(url.list=url.list)
+boards.test <- cnes.board(url.list=url.list) #OK
+assets.test <- cnes.assets(url.list=url.list) #OK
+budget.test <- cnes.budget(url.list=url.list) #OK
+source.test <- cnes.source(url.list=url.list) #OK
+partner.test <- cnes.partner(url.list=url.list) #error in 5 
 
 
 #Closing server

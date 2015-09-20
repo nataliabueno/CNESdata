@@ -4,7 +4,7 @@
 #Function to scrap assets OK
 #Function to scrap year budget OK
 #Function to scrap sources OK
-#Function to scrap partnerships and partnerships details
+#Function to scrap partnerships and partnerships details OK
 ##########################################################
 
 
@@ -231,6 +231,7 @@ cnes.partner <- function(url.list=url.list){
      
   ltemp <- list()
   lpartner <- list()
+  ltempf <- list()
   
   for (i in 1:nrow(url.list)){
     print(i)
@@ -301,15 +302,16 @@ cnes.partner <- function(url.list=url.list){
         temp1[1,9] <-  as.character(raw1$V1[19])
         temp1[1,10] <-  as.character(raw1$V1[21])
         temp1[1,11] <-  as.character(raw1$V1[23])
-        temp1[1,11] <-  as.character(raw1$V1[25])  
+        temp1[1,12] <-  as.character(raw1$V1[25]) 
         lpartner[[j]] <- temp1
         remDrv$goBack()
-      }      
-    }                               
+      } 
+      data6 <- do.call(rbind, lpartner) 
+    }    
   } 
-  data6 <- do.call(rbind, lpartner) 
-  data7 <- do.call(rbind, ltemp)
-  return(list(data6, data7))  
+  ltempf[[i]] <- cbind(ltemp[[i]], data6)
+  data7 <- do.call(rbind, ltempf)
+  return(list(data7))  
 }                        
                         
    
