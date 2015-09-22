@@ -4,7 +4,7 @@
 #Function to scrap assets OK OK
 #Function to scrap year budget OK OK
 #Function to scrap sources OK OK
-#Function to scrap partnerships and partnerships details OK FIX
+#Function to scrap partnerships and partnerships details OK OK
 ##########################################################
 
 

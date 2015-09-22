@@ -11,19 +11,19 @@
 
 source("~/Dropbox/CNES/CNES_functions.R") #requires packages RSelenium, RCurl, XLM
 
-#start.time <- Sys.time()
-#test <- getLinksCNEs(86099,86200)
-#end.time <- Sys.time()
-#time.elapsed <- end.time - start.time
+start.time <- Sys.time()
+links.fivedigits <- getLinksCNEs(86099,86200) #set range of digits
+end.time <- Sys.time()
+time.elapsed <- end.time - start.time
+save(links.fivedigits, "~/Dropbox/CNES/fivedigits.Rda")
 
-
-load("~/Dropbox/CNES/temp.Rda")
-url.list <- test
+#load("~/Dropbox/CNES/temp.Rda")
+#url.list <- test
 #needs RSelenium manual activation in library
 
 #Transform into matrix
 url.list <- as.matrix(url.list)
-url.list <- url.list[13:16, ] #testing functions
+#url.list <- url.list[13:16, ] #testing functions
 
 #Setting server up
 checkForServer()
