@@ -230,9 +230,7 @@ cnes.source <- function(url.list=url.list){
 cnes.partner <- function(url.list=url.list){    
      
   ltemp <- list()
-  lpartner <- list()
   ltempf <- list()
-  ltempff <- list()
   
   for (i in 1:nrow(url.list)){
     print(i)
@@ -267,54 +265,45 @@ cnes.partner <- function(url.list=url.list){
     }
     
     #Details on partnerships
-    temp1 <- matrix(NA, 1, 12)
-    colnames(temp1) <- c("Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
+    nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
+    temp1 <- matrix(NA, nr.p, 13)
+    colnames(temp1) <- c("cnpj", "Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
                          "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
                          "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
                          "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
                          "Nº de  Beneficiários", "Previsão de início das atividades", 
                          "Previsão de término das atividades", "Resumo do objetivo da parceria")
-    nr.p <- nrow(ltemp[[i]]) #getting number of partnerships
-    if (nr.p==1) {
-      temp1[1, 1:12] <- rep(NA, 12)
-      
+    if (nr.p==0) {
+      temp1[1, 1:13] <- rep(NA, 13)
     }
-    if (nr.p > 1){
+    if (nr.p >= 1){
       
       for (j in 1:nr.p){
         print(j)
         plink <- paste("//a[@href = ' ParceriasSubvencoesPublicas", j, '.html \']', sep="")
         remDrv$findElement(using = 'xpath', plink)$clickElement()
         raw1  <- readHTMLTable(remDrv$getPageSource()[[1]], encoding = "UTF-8")$`NULL`
-        temp1 <- matrix(NA, 1, 12)
-        colnames(temp1) <- c("Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
-                            "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
-                            "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
-                            "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
-                            "Nº de  Beneficiários", "Previsão de início das atividades", 
-                            "Previsão de término das atividades", "Resumo do objetivo da parceria")
-        temp1[1,1] <-  as.character(raw1$V1[3])
-        temp1[1,2] <-  as.character(raw1$V1[5])
-        temp1[1,3] <-  as.character(raw1$V1[7])
-        temp1[1,4] <-  as.character(raw1$V1[9])
-        temp1[1,5] <-  as.character(raw1$V1[11])
-        temp1[1,6] <-  as.character(raw1$V1[13])
-        temp1[1,7] <-  as.character(raw1$V1[15])
-        temp1[1,8] <-  as.character(raw1$V1[17])
-        temp1[1,9] <-  as.character(raw1$V1[19])
-        temp1[1,10] <-  as.character(raw1$V1[21])
-        temp1[1,11] <-  as.character(raw1$V1[23])
-        temp1[1,12] <-  as.character(raw1$V1[25]) 
-        lpartner[[j]] <- temp1
+        temp1[j,1] <-  url.list[i, 1]
+        temp1[j,2] <-  as.character(raw1$V1[3])
+        temp1[j,3] <-  as.character(raw1$V1[5])
+        temp1[j,4] <-  as.character(raw1$V1[7])
+        temp1[j,5] <-  as.character(raw1$V1[9])
+        temp1[j,6] <-  as.character(raw1$V1[11])
+        temp1[j,7] <-  as.character(raw1$V1[13])
+        temp1[j,8] <-  as.character(raw1$V1[15])
+        temp1[j,9] <-  as.character(raw1$V1[17])
+        temp1[j,10] <-  as.character(raw1$V1[19])
+        temp1[j,11] <-  as.character(raw1$V1[21])
+        temp1[j,12] <-  as.character(raw1$V1[23])
+        temp1[j,13] <-  as.character(raw1$V1[25]) 
         remDrv$goBack()
       }  
     }
-    ltempf <- do.call(rbind, lpartner)
-    ltempff[[i]] <- ltempf
+    ltempf[[i]] <- temp1
   } 
-  data6 <- do.call(rbind, ltempff)
-  data7 <- do.call(rbind, ltemp)
-  return(list(data7, data6))  
+  data6 <- do.call(rbind, ltemp)
+  data7 <- do.call(rbind, ltempf)
+  return(list(data6, data7))  
 }                        
                         
    
