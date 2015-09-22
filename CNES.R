@@ -12,7 +12,7 @@
 source("~/Dropbox/CNES/CNES_functions.R") #requires packages RSelenium, RCurl, XLM
 
 start.time <- Sys.time()
-links.fivedigits <- getLinksCNEs(86099,86200) #set range of digits
+links.fivedigits <- getLinksCNEs(00000,99999) #set range of digit
 end.time <- Sys.time()
 time.elapsed <- end.time - start.time
 save(links.fivedigits, "~/Dropbox/CNES/fivedigits.Rda")
@@ -22,7 +22,7 @@ save(links.fivedigits, "~/Dropbox/CNES/fivedigits.Rda")
 #needs RSelenium manual activation in library
 
 #Transform into matrix
-url.list <- as.matrix(url.list)
+url.list <- as.matrix(links.fivedigits)
 #url.list <- url.list[13:16, ] #testing functions
 
 #Setting server up
@@ -32,11 +32,11 @@ remDrv <- remoteDriver()
 remDrv$open()
 
 #Getting data
-boards.test <- cnes.board(url.list=url.list) #OK
-assets.test <- cnes.assets(url.list=url.list) #OK
-budget.test <- cnes.budget(url.list=url.list) #OK
-source.test <- cnes.source(url.list=url.list) #OK
-partner.test <- cnes.partner(url.list=url.list) #OK
+boards.test <- cnes.board(url.list=url.list) 
+assets.test <- cnes.assets(url.list=url.list) 
+budget.test <- cnes.budget(url.list=url.list)
+source.test <- cnes.source(url.list=url.list) 
+partner.test <- cnes.partner(url.list=url.list)
 
 
 #Closing server
