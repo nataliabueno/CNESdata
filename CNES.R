@@ -1,6 +1,6 @@
 ##########################################################
-#0. Open server
-#1. Get links
+#0. Get links
+#1. Open server
 #2. Scrap president and board infor
 #3. Scrap assets
 #4. Scrap year budget
