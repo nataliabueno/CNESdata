@@ -9,7 +9,8 @@
 ##########################################################
 
 
-source("~/Dropbox/CNES/CNES_functions.R") #requires packages RSelenium, RCurl, XLM
+source("~/Dropbox/CNES/CNES_functions.R") #requires packages RCurl, XLM, rvest, httr
+
 
 start.time <- Sys.time()
 #links.fivedigits <- getLinksCNEs(86099,86200) #set range of digit
@@ -19,7 +20,7 @@ time.elapsed <- end.time - start.time
 
 load("~/Dropbox/CNES/temp.Rda")
 url.list <- test
-#needs RSelenium manual activation in library
+
 
 #Transform into matrix
 url.list <- as.matrix(url.list)

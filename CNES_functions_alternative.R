@@ -76,61 +76,50 @@ cnes.board <- function(url.list=url.list){
     url.p <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                    url.list[i, 4], "/EstatutoDiretoria.html", sep="")
 
-    page <- try(read_html(url.p), silent=TRUE)
-    
-    
-    erro <- try(readHTMLTable(url), silent=TRUE)
-    if (!('try-error' %in% class(erro))){
-      tabela <- readHTMLTable(url, stringsAsFactors = F)[[2]]
-      cnpj <- names(tabela)[2]
-      ano <- as.numeric(tabela[2,2])
-      data.out <- rbind(data.out, data.frame(cnpj, ano, url))
-    }
-    
-    while (class(page)[1] == "try-error"){
+    page.p <- try(read_html(url.p), silent=TRUE)
+        
+    while (class(page.p)[1] == "try-error"){
       print("Retry")
-      Sys.sleep(1)
-      u <- try(html(url.page))
+      Sys.sleep(5)
+      page.p <- try(html(url.p))
     }
     
-    page <- read_html(url.p)
-    
-    data1[i, 4] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 4] <- as.character(page.p %>% html_nodes("table .formulario") 
                                 %>% .[[1]] %>% html_table() %>% .[2]) #sede
-    data1[i, 5] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 5] <- as.character(page.p %>% html_nodes("table .formulario") 
                                 %>% .[[2]] %>% html_table() %>% .[1,2])#UF
-    data1[i, 6] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 6] <- as.character(page.p %>% html_nodes("table .formulario") 
                                 %>% .[[2]] %>% html_table() %>% .[1,4])#mun
-    data1[i, 7] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 7] <- as.character(page.p %>% html_nodes("table .formulario") 
                                 %>% .[[2]] %>% html_table() %>% .[2,2])#cartorio
-    data1[i, 8] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 8] <- as.character(page.p %>% html_nodes("table .formulario") 
                                 %>% .[[2]] %>% html_table() %>% .[3,2])#data_reg
-    data1[i, 9] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 9] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[4]] %>% html_table() %>% .[1,2])#change_previous
-    data1[i, 10] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 10] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[6]] %>% html_table() %>% .[1,2])#data_current_begin
-    data1[i, 11] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 11] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[6]] %>% html_table() %>% .[1,4])#data_current_end
-    data1[i, 12] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 12] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[7]] %>% html_table() %>% .[1,2])#name
-    data1[i, 13] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 13] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[7]] %>% html_table() %>% .[2,2])#occupation
-    data1[i, 14] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 14] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[7]] %>% html_table() %>% .[3,2])#position
-    data1[i, 15] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 15] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[7]] %>% html_table() %>% .[3,2])#gender
-    data1[i, 16] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 16] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[7]] %>% html_table() %>% .[4,2])#public_employee
-    data1[i, 17] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 17] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[8]] %>% html_table() %>% .[1,2])#paid
-    data1[i, 18] <- as.character(page %>% html_nodes("table .formulario") 
+    data1[i, 18] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[9]] %>% html_table() %>% .[1,2])#which_paid
   
     
     #Board
-    url.board <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
+    url.b <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                url.list[i, 4], "/QualificacaoDiretoria.html", sep="")
-    page.b <- read_html(url.board)
+    page.b <- read_html(url.b)
     
     board <- page.b %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
     board <- cbind(rep(url.list[i, 1], nrow(board)), rep(url.list[i, 2], nrow(board)),
@@ -149,7 +138,6 @@ cnes.board <- function(url.list=url.list){
 cnes.budget <- function(url.list=url.list){
 
     #identifying organization
-    data3[i, 1:3] <- url.list[i,1:3]
     data3 <- matrix(NA, nrow(url.list), 69)
     colnames(data3) <- c("cnpj", "year", "main_url", "Prestação de Serviços (Exceto Saúde/Educação)", "Recursos - Subvenções Públicas", 
                                                   "Recursos - Contribuições Públicas",  "Recursos - Convênios Públicos", 
@@ -189,9 +177,18 @@ cnes.budget <- function(url.list=url.list){
       print(i)
       
       #budget
-      url.p <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
+      url.a <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                      url.list[i, 4], "/DemontrativoReceitasDespesasExercicio.html", sep="")
-      page.a <- read_html(url.p)
+  
+      page.a <- try(read_html(url.a), silent=TRUE)
+      
+      while (class(page.a)[1] == "try-error"){
+        print("Retry")
+        Sys.sleep(5)
+        page.a <- try(html(url.y))
+      }
+        
+      
       receitas <- page.a %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
       despesas <- page.a %>% html_nodes("table .listagem") %>% html_table()  %>% .[[2]]
       
@@ -203,6 +200,7 @@ cnes.budget <- function(url.list=url.list){
 
    
       temp <- cbind(receitas, despesas)
+      data3[i, 1:3] <- url.list[i,1:3]
       data3[i, 4:ncol(data3)] <- temp[2,]
 
 
@@ -237,9 +235,18 @@ cnes.assets <- function(url.list=url.list){
     print(i)
     
     #Assets
-    url.a <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
+    url.c <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                    url.list[i, 4], "/BalancoPatrimonial.html", sep="")
-    page.c <- read_html(url.a)
+    
+    page.c <- try(read_html(url.c), silent=TRUE)
+    
+    while (class(page.c)[1] == "try-error"){
+      print("Retry")
+      Sys.sleep(5)
+      page.c <- try(html(url.c))
+    }
+    
+    
     patrimonio.ativo <- page.c %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
     patrimonio.passivo <- page.c %>% html_nodes("table .listagem") %>% html_table()  %>% .[[2]]
     
@@ -250,6 +257,7 @@ cnes.assets <- function(url.list=url.list){
     row.names(patrimonio.passivo) <- NULL
     
     temp <- cbind(patrimonio.ativo, patrimonio.passivo)
+    data4[i, 1:3] <- url.list[i,1:3]
     data4[i, 4:ncol(data4)] <- temp[2,]
   }
   return(data4)
@@ -274,7 +282,17 @@ cnes.source <- function(url.list=url.list){
     #Sources 
     url.s <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                    url.list[i, 4], "/FontesRecursos.html", sep="")
-    page.s <- read_html(url.s)
+    
+    
+    page.s <- try(read_html(url.s), silent=TRUE)
+    
+    while (class(page.s)[1] == "try-error"){
+      print("Retry")
+      Sys.sleep(5)
+      page.s <- try(html(url.s))
+    }
+    
+  
     sources <- page.s %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
     
     sources <- t(sources)
@@ -296,10 +314,18 @@ cnes.partner <- function(url.list=url.list){
     print(i)
    
     #Partnerships
-    url.p <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
+    url.ps <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                    url.list[i, 4], "/ListaParceriasSubvencoesPublicas.html", sep="")
-    page.p <- read_html(url.p)
-    sources <- page.p %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
+    
+    page.ps <- try(read_html(url.ps), silent=TRUE)
+    
+    while (class(page.ps)[1] == "try-error"){
+      print("Retry")
+      Sys.sleep(5)
+      page.ps <- try(html(url.ps))
+    }
+    
+    sources <- page.ps %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
     
     if (nrow(sources)==0) {
       temp <- matrix(NA, 1, 5)
@@ -338,7 +364,15 @@ cnes.partner <- function(url.list=url.list){
         
         url.j <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                        url.list[i, 4], "/ParceriasSubvencoesPublicas", j,  ".html", sep="")
-        page.j <- read_html(url.j)
+        
+        page.j <- try(read_html(url.j), silent=TRUE)
+        
+        while (class(page.j)[1] == "try-error"){
+          print("Retry")
+          Sys.sleep(5)
+          page.j <- try(html(url.j))
+        }
+            
         details <- page.j %>% html_nodes("table .formulario") %>% html_table()
         
         as.character(details[[5]])
