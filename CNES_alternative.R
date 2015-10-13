@@ -13,12 +13,13 @@ source("~/Dropbox/CNES/CNES_functions.R") #requires packages RCurl, XLM, rvest, 
 
 
 start.time <- Sys.time()
-#links.fivedigits <- getLinksCNEs(86099,86200) #set range of digit
+temp2 <- getLinksCNEs(14000,14050) 
 end.time <- Sys.time()
 time.elapsed <- end.time - start.time
-#save(links.fivedigits, "~/Dropbox/CNES/fivedigits11111.Rda")
+save(temp2, "~/Dropbox/CNES/temp2.Rda")
 
 load("~/Dropbox/CNES/temp.Rda")
+load("~/Dropbox/CNES/temp2.Rda")
 url.list <- test
 
 

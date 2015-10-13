@@ -1,5 +1,5 @@
 ##########################################################
-#Function to get CNES links 
+#Function to get CNES links OK 
 #Function to scrap president and board information OK OK
 #Function to scrap assets OK OK
 #Function to scrap year budget OK OK 
@@ -14,40 +14,19 @@ library(rvest)
 library(httr)
 
 
-
-#possible.vals = sprintf("%05.f", seq(0,99999,1))
-
-#data.frame(val = possible.vals, complete = FALSE, exists = FALSE)
-
-#for (i in nrow()){
-#  if (!(...[i,'complete'])){
-#    check if page exists
-#    GET
-#    if something exists {
-    
-#    data...[i,'exists'] = TRUE
-#    }
-#    data[i,'çomplete'] = TRUE
-    
-#  }
-  
-  
-#}
-
 getLinksCNEs <- function(num.inicial, num.final){
-  require(RCurl)
-  require(XML)
   u <- "http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/PLACEHOLDER/RelatorioCircunstanciado.html"
   data.out <- data.frame()
   for (i in num.inicial:num.final){
     print(i)
     url <- gsub("PLACEHOLDER", i, u)
     erro <- try(readHTMLTable(url), silent=TRUE)
+    Sys.sleep(3)
     if (!('try-error' %in% class(erro))){
       tabela <- readHTMLTable(url, stringsAsFactors = F)[[2]]
       cnpj <- names(tabela)[2]
       ano <- as.numeric(tabela[2,2])
-      data.out <- rbind(data.out, data.frame(cnpj, ano, url))
+      data.out <- rbind(data.out, data.frame(cnpj, ano, url, i))
     }
   }
   return(data.out)
@@ -79,7 +58,6 @@ cnes.board <- function(url.list=url.list){
     page.p <- try(read_html(url.p), silent=TRUE)
         
     while (class(page.p)[1] == "try-error"){
-      print("Retry")
       Sys.sleep(5)
       page.p <- try(html(url.p))
     }
@@ -183,7 +161,6 @@ cnes.budget <- function(url.list=url.list){
       page.a <- try(read_html(url.a), silent=TRUE)
       
       while (class(page.a)[1] == "try-error"){
-        print("Retry")
         Sys.sleep(5)
         page.a <- try(html(url.y))
       }
@@ -241,7 +218,6 @@ cnes.assets <- function(url.list=url.list){
     page.c <- try(read_html(url.c), silent=TRUE)
     
     while (class(page.c)[1] == "try-error"){
-      print("Retry")
       Sys.sleep(5)
       page.c <- try(html(url.c))
     }
@@ -287,7 +263,6 @@ cnes.source <- function(url.list=url.list){
     page.s <- try(read_html(url.s), silent=TRUE)
     
     while (class(page.s)[1] == "try-error"){
-      print("Retry")
       Sys.sleep(5)
       page.s <- try(html(url.s))
     }
@@ -320,7 +295,6 @@ cnes.partner <- function(url.list=url.list){
     page.ps <- try(read_html(url.ps), silent=TRUE)
     
     while (class(page.ps)[1] == "try-error"){
-      print("Retry")
       Sys.sleep(5)
       page.ps <- try(html(url.ps))
     }
@@ -368,7 +342,6 @@ cnes.partner <- function(url.list=url.list){
         page.j <- try(read_html(url.j), silent=TRUE)
         
         while (class(page.j)[1] == "try-error"){
-          print("Retry")
           Sys.sleep(5)
           page.j <- try(html(url.j))
         }
