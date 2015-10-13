@@ -13,6 +13,25 @@ library(XML)
 library(RSelenium)
 
 
+possible.vals = sprintf("%05.f", seq(0,99999,1))
+
+data.frame(val = possible.vals, complete = FALSE, exists = FALSE)
+
+for (i in nrow()){
+  if (!(...[i,'complete'])){
+    check if page exists
+    GET
+    if something exists {
+    
+    data...[i,'exists'] = TRUE
+    }
+    data[i,'çomplete'] = TRUE
+    
+  }
+  
+  
+}
+
 getLinksCNEs <- function(num.inicial, num.final){
   require(RCurl)
   require(XML)
