@@ -9,24 +9,22 @@
 ##########################################################
 
 
-source("~/Dropbox/CNES/CNES_functions.R") #requires packages RCurl, XLM, rvest, httr
+source("~/Dropbox/CNES/CNES_functions_alternative.R") #requires packages RCurl, XLM, rvest, httr
 
 
 start.time <- Sys.time()
-temp2 <- getLinksCNEs(14000,14050) 
+temp3 <- getLinksCNEs(14000,14500) 
 end.time <- Sys.time()
 time.elapsed <- end.time - start.time
-save(temp2, "~/Dropbox/CNES/temp2.Rda")
+save(temp3, file="~/Dropbox/CNES/temp3.Rda")
 
-load("~/Dropbox/CNES/temp.Rda")
-load("~/Dropbox/CNES/temp2.Rda")
-url.list <- test
+(time.elapsed*(999999/500)) # time estimate
 
+#load("~/Dropbox/CNES/temp.Rda")
+#load("~/Dropbox/CNES/temp3.Rda")
 
 #Transform into matrix
-url.list <- as.matrix(url.list)
-url.list <- url.list[13:16, ] #testing functions
-url.list <- cbind(url.list, c("86130", "86131", "86135", "86136"))
+url.list <- as.matrix(temp3)
 
 #Getting data
 boards.test <- cnes.board(url.list=url.list) 
@@ -35,7 +33,3 @@ budget.test <- cnes.budget(url.list=url.list)
 source.test <- cnes.source(url.list=url.list) 
 partner.test <- cnes.partner(url.list=url.list)
 
-
-
-
-  

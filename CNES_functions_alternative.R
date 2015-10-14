@@ -1,18 +1,15 @@
 ##########################################################
-#Function to get CNES links OK 
+#Function to get CNES links OK OK
 #Function to scrap president and board information OK OK
 #Function to scrap assets OK OK
 #Function to scrap year budget OK OK 
 #Function to scrap sources OK OK
 #Function to scrap partnerships and partnerships details OK
 ##########################################################
-
-
 library(RCurl)
 library(XML)
 library(rvest)
 library(httr)
-
 
 getLinksCNEs <- function(num.inicial, num.final){
   u <- "http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/PLACEHOLDER/RelatorioCircunstanciado.html"
@@ -59,7 +56,7 @@ cnes.board <- function(url.list=url.list){
         
     while (class(page.p)[1] == "try-error"){
       Sys.sleep(5)
-      page.p <- try(html(url.p))
+      page.p <- try(read_html(url.p), silent=TRUE)
     }
     
     data1[i, 4] <- as.character(page.p %>% html_nodes("table .formulario") 
@@ -85,9 +82,9 @@ cnes.board <- function(url.list=url.list){
     data1[i, 14] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[7]] %>% html_table() %>% .[3,2])#position
     data1[i, 15] <- as.character(page.p %>% html_nodes("table .formulario") 
-                                 %>% .[[7]] %>% html_table() %>% .[3,2])#gender
+                                 %>% .[[7]] %>% html_table() %>% .[4,2])#gender
     data1[i, 16] <- as.character(page.p %>% html_nodes("table .formulario") 
-                                 %>% .[[7]] %>% html_table() %>% .[4,2])#public_employee
+                                 %>% .[[7]] %>% html_table() %>% .[5,2])#public_employee
     data1[i, 17] <- as.character(page.p %>% html_nodes("table .formulario") 
                                  %>% .[[8]] %>% html_table() %>% .[1,2])#paid
     data1[i, 18] <- as.character(page.p %>% html_nodes("table .formulario") 
@@ -97,7 +94,13 @@ cnes.board <- function(url.list=url.list){
     #Board
     url.b <- paste("http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/", 
                url.list[i, 4], "/QualificacaoDiretoria.html", sep="")
-    page.b <- read_html(url.b)
+    page.b <- read_html(url.b, silent=TRUE)
+    
+    while (class(page.b)[1] == "try-error"){
+      Sys.sleep(5)
+      page.b <- try(read_html(url.b), silent=TRUE)
+    }
+    
     
     board <- page.b %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
     board <- cbind(rep(url.list[i, 1], nrow(board)), rep(url.list[i, 2], nrow(board)),
@@ -162,7 +165,7 @@ cnes.budget <- function(url.list=url.list){
       
       while (class(page.a)[1] == "try-error"){
         Sys.sleep(5)
-        page.a <- try(html(url.y))
+        page.a <- try(read_html(url.y), silent=TRUE)
       }
         
       
@@ -219,7 +222,7 @@ cnes.assets <- function(url.list=url.list){
     
     while (class(page.c)[1] == "try-error"){
       Sys.sleep(5)
-      page.c <- try(html(url.c))
+      page.c <- try(read_html(url.c), silent=TRUE)
     }
     
     
@@ -264,7 +267,7 @@ cnes.source <- function(url.list=url.list){
     
     while (class(page.s)[1] == "try-error"){
       Sys.sleep(5)
-      page.s <- try(html(url.s))
+      page.s <- try(read_html(url.s))
     }
     
   
@@ -294,44 +297,31 @@ cnes.partner <- function(url.list=url.list){
     
     page.ps <- try(read_html(url.ps), silent=TRUE)
     
-    while (class(page.ps)[1] == "try-error"){
+    while (class(page.ps)[1] == "try-error"){ 
       Sys.sleep(5)
-      page.ps <- try(html(url.ps))
+      page.ps <- try(read_html(url.ps))
     }
     
-    sources <- page.ps %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
-    
-    if (nrow(sources)==0) {
-      temp <- matrix(NA, 1, 5)
-      colnames(temp) <- c("cnpj", "year", "Nome Órgão_Entidade", 
-                          "Natureza do Instrumento", "Posição na Estrutura Federativa")
-      temp[1, 1:2] <-  url.list[1, 1:2]
-      temp[1, 3:5] <-  c("NA", "NA", "NA")
-      ltemp[[i]] <- temp 
-    }
-    
-    if (nrow(sources) >= 1) {
+    sources <- page.ps %>% html_nodes("table .listagem") %>% html_table()
       
-    temp <- cbind(rep(url.list[i, 1], nrow(sources)), rep(url.list[i, 2], nrow(sources)),
-                  sources)
+    if (length(sources)==1) {
+      
+    temp <- cbind(rep(url.list[i, 1], nrow(sources[[1]])), rep(url.list[i, 2], nrow(sources[[1]])),
+                  sources[[1]])
     colnames(temp) <- c("cnpj", "ano", "Nome Órgão_Entidade", 
                         "Natureza do Instrumento", "Posição na Estrutura Federativa")
     ltemp[[i]] <- temp
-    }
-    
+
     #Details on partnerships
-    nr.p <- nrow(sources) #getting number of partnerships
+    nr.p <- nrow(sources[[1]]) #getting number of partnerships
     temp1 <- matrix(NA, nr.p, 13)
+
     colnames(temp1) <- c("cnpj", "Nome do Órgão ou Entidade de Parceria", "Classificação do órgão na estrutura administrativa",
                          "Posição do órgão na estrutura federativa", "Origem dos recursos repassados",
                          "Natureza do instrumento de parceria", "Data de publicação na imprensa oficial",
                          "Total de recursos financeiros previstos", "Recursos financeiros já repassados", 
                          "Nº de  Beneficiários", "Previsão de início das atividades", 
                          "Previsão de término das atividades", "Resumo do objetivo da parceria")
-    if (nr.p==0) {
-      temp1[1, 1:13] <- rep(NA, 13)
-    }
-    if (nr.p >= 1){
       
       for (j in 1:nr.p){
         print(j)
@@ -343,12 +333,10 @@ cnes.partner <- function(url.list=url.list){
         
         while (class(page.j)[1] == "try-error"){
           Sys.sleep(5)
-          page.j <- try(html(url.j))
+          page.j <- try(read_html(url.j))
         }
             
         details <- page.j %>% html_nodes("table .formulario") %>% html_table()
-        
-        as.character(details[[5]])
         
         temp1[j,1] <-  url.list[i, 1]
         temp1[j,2] <-  as.character(details[[1]])
@@ -364,8 +352,8 @@ cnes.partner <- function(url.list=url.list){
         temp1[j,12] <-  as.character(details[[11]])
         temp1[j,13] <-   as.character(details[[12]])
       }  
-    }
     ltempf[[i]] <- temp1
+    }
   } 
   data6 <- do.call(rbind, ltemp)
   data7 <- do.call(rbind, ltempf)
