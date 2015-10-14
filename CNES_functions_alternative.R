@@ -6,12 +6,13 @@
 #Function to scrap sources OK OK
 #Function to scrap partnerships and partnerships details OK
 ##########################################################
-library(RCurl)
+#library(RCurl)
 library(XML)
 library(rvest)
 library(httr)
 
 getLinksCNEs <- function(num.inicial, num.final){
+  require(XML)
   u <- "http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/PLACEHOLDER/RelatorioCircunstanciado.html"
   data.out <- data.frame()
   for (i in num.inicial:num.final){
@@ -28,7 +29,6 @@ getLinksCNEs <- function(num.inicial, num.final){
   }
   return(data.out)
 }
-
 
 
 cnes.board <- function(url.list=url.list){
@@ -101,14 +101,16 @@ cnes.board <- function(url.list=url.list){
       page.b <- try(read_html(url.b), silent=TRUE)
     }
     
+    board <- page.b %>% html_nodes("table .listagem") %>% html_table()
     
-    board <- page.b %>% html_nodes("table .listagem") %>% html_table()  %>% .[[1]]
-    board <- cbind(rep(url.list[i, 1], nrow(board)), rep(url.list[i, 2], nrow(board)),
-                   board)
+    if (length(board)==1) {
+    
+    board <- cbind(rep(url.list[i, 1], nrow(board[[1]])), rep(url.list[i, 2], nrow(board[[1]])),
+                   board[[1]])
     colnames(board) <- c("cnpj", "year", "name", "position", "public_employee")
                        
     ltemp[[i]] <- board
-    
+    }    
   }
  
   data2 <- do.call(rbind, ltemp)

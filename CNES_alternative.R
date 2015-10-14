@@ -8,9 +8,7 @@
 #6. Scrap partnerships and details 
 ##########################################################
 
-
 source("~/Dropbox/CNES/CNES_functions_alternative.R") #requires packages RCurl, XLM, rvest, httr
-
 
 start.time <- Sys.time()
 temp3 <- getLinksCNEs(14000,14500) 
@@ -21,7 +19,7 @@ save(temp3, file="~/Dropbox/CNES/temp3.Rda")
 (time.elapsed*(999999/500)) # time estimate
 
 #load("~/Dropbox/CNES/temp.Rda")
-#load("~/Dropbox/CNES/temp3.Rda")
+load("~/Dropbox/CNES/temp3.Rda")
 
 #Transform into matrix
 url.list <- as.matrix(temp3)
