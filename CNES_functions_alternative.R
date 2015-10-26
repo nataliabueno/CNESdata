@@ -6,29 +6,31 @@
 #Function to scrap sources OK OK
 #Function to scrap partnerships and partnerships details OK
 ##########################################################
-#library(RCurl)
+
 library(XML)
 library(rvest)
 library(httr)
+library(foreach)
+library(doParallel)
 
-getLinksCNEs <- function(num.inicial, num.final){
+getLinksCNEs <- function(num){
   require(XML)
   u <- "http://portal.mj.gov.br/CNEsPublico/relatorioCNEs/PLACEHOLDER/RelatorioCircunstanciado.html"
   data.out <- data.frame()
-  for (i in num.inicial:num.final){
-    print(i)
-    url <- gsub("PLACEHOLDER", i, u)
-    erro <- try(readHTMLTable(url), silent=TRUE)
-    Sys.sleep(3)
-    if (!('try-error' %in% class(erro))){
-      tabela <- readHTMLTable(url, stringsAsFactors = F)[[2]]
-      cnpj <- names(tabela)[2]
-      ano <- as.numeric(tabela[2,2])
-      data.out <- rbind(data.out, data.frame(cnpj, ano, url, i))
-    }
+  url <- gsub("PLACEHOLDER", num, u)
+  erro <- try(readHTMLTable(url), silent=TRUE)
+  #Sys.sleep(1)
+  if (!('try-error' %in% class(erro))){
+    tabela <- readHTMLTable(url, stringsAsFactors = F)[[2]]
+    cnpj <- names(tabela)[2]
+    ano <- as.numeric(tabela[2,2])
+    data.out <- rbind(data.out, data.frame(cnpj, ano, url, num))
   }
   return(data.out)
 }
+
+
+###############################################################################
 
 
 cnes.board <- function(url.list=url.list){
